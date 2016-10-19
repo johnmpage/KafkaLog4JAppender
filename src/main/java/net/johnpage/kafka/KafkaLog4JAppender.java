@@ -20,14 +20,13 @@ public class KafkaLog4JAppender extends AppenderSkeleton {
   private Formatter formatter = new JsonFormatter();
   private boolean isInitialized = false;
   public void activateOptions() {
-    System.out.println("KafkaLog4JAppender: Starting...");
     System.out.println("KafkaLog4JAppender: kafkaProducerProperties configuration = "+kafkaProducerProperties);
     final Properties properties = new Properties();
     try {
       properties.load(new ByteArrayInputStream(kafkaProducerProperties.getBytes()));
       System.out.println("KafkaLog4JAppender: Kafka Producer Properties = "+properties);
       if(properties.getProperty("ssl.truststore.location")!=null){
-          File keystoreFile = new File(properties.getProperty("ssl.truststore.location"));
+        File keystoreFile = new File(properties.getProperty("ssl.truststore.location"));
         if( !keystoreFile.exists() ){
           System.out.println("KafkaLog4JAppender: Keystore does not exist at the configured path: "+ keystoreFile.getAbsolutePath());
           throw new RuntimeException("KafkaLog4JAppender: Keystore does not exist at the configured path: "+ keystoreFile.getAbsolutePath());
