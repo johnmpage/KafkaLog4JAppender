@@ -10,9 +10,9 @@
 		<param name="KafkaProducerPropertiesFilePath" value="/kafka-producer.properties" />
 </appender>
 ```
-This is a Log4J Appender integrated with a Kafka Producer. It posts events as they are added to a remote server from your file. 
-Kafka 0.70 has a Log4j appender, but newer versions omit an appender. This Appender is intended to be used with the latest version of Kafka 0.10.
+This is a Log4J Appender integrated with a Kafka Producer. It posts logging events as they occur to a remote Kafka topic. 
 
+Kafka 0.70 has a Log4j appender, but newer versions omit one. This Appender is intended to be used with the latest version of Kafka 0.10.
 
 ### Building
 ```
@@ -50,4 +50,4 @@ Tested with Kafka 0.10. Should be backwards compatible with 0.90 and 0.82. These
 ```java
 new KafkaProducer(Properties properties) 
 ```
-To use a different version of Kafka, include the desired version on the classpath. Version-appropriate properties will need to be used.
+Version-appropriate properties will need to be used.
