@@ -2,7 +2,6 @@ package net.johnpage.kafka;
 
 import net.johnpage.kafka.formatter.Formatter;
 import net.johnpage.kafka.formatter.JsonFormatter;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.log4j.AppenderSkeleton;
@@ -10,20 +9,30 @@ import org.apache.log4j.spi.LoggingEvent;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class KafkaLog4JAppender extends AppenderSkeleton {
   private boolean logToSystemOut = false;
   private String kafkaProducerProperties;
+  private String kafkaProducerPropertiesFilePath;
   private String topic;
   private Producer producer;
   private Formatter formatter = new JsonFormatter();
   private boolean isInitialized = false;
   public void activateOptions() {
     System.out.println("KafkaLog4JAppender: kafkaProducerProperties configuration = "+kafkaProducerProperties);
-    final Properties properties = new Properties();
+    Properties properties = null;
     try {
-      properties.load(new ByteArrayInputStream(kafkaProducerProperties.getBytes()));
+      if(kafkaProducerPropertiesFilePath!=null && kafkaProducerPropertiesFilePath.length()>0){
+        properties = getPropertiesFromFile();
+      }else if(kafkaProducerProperties!=null && kafkaProducerProperties.length()>0){
+        properties = new Properties();
+        properties.load(new ByteArrayInputStream(kafkaProducerProperties.getBytes()));
+      }else{
+        throw new NullPointerException("Either the kafkaProducerPropertiesFilePath or kafkaProducerProperties property must be set in the Log4j configuration file.");
+      }
       System.out.println("KafkaLog4JAppender: Kafka Producer Properties = "+properties);
       if(properties.getProperty("ssl.truststore.location")!=null){
         File keystoreFile = new File(properties.getProperty("ssl.truststore.location"));
@@ -65,6 +74,14 @@ public class KafkaLog4JAppender extends AppenderSkeleton {
       e.printStackTrace();
     }
   }
+  private Properties getPropertiesFromFile() throws IOException {
+    Properties properties = new Properties();
+    InputStream in;
+    in = getClass().getResourceAsStream(kafkaProducerPropertiesFilePath);
+    properties.load(in);
+    in.close();
+    return properties;
+  }
   public void close() {
     producer.close();
   }
@@ -96,5 +113,11 @@ public class KafkaLog4JAppender extends AppenderSkeleton {
   }
   public void setKafkaProducerProperties(String kafkaProducerProperties) {
     this.kafkaProducerProperties = kafkaProducerProperties;
+  }
+  public String getKafkaProducerPropertiesFilePath() {
+    return kafkaProducerPropertiesFilePath;
+  }
+  public void setKafkaProducerPropertiesFilePath(String kafkaProducerPropertiesFilePath) {
+    this.kafkaProducerPropertiesFilePath = kafkaProducerPropertiesFilePath;
   }
 }

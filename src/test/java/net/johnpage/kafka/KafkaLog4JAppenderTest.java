@@ -19,7 +19,7 @@ public class KafkaLog4JAppenderTest {
     Logger logger = Logger.getLogger(KafkaLog4JAppenderTest.class);
     logger.setLevel(Level.WARN);
     KafkaLog4JAppender appender = new KafkaLog4JAppender();
-    String properties ="";
+    String properties ="property=value";
     appender.setKafkaProducerProperties(properties);
     appender.setTopic("a-topic");
     MockKafkaProducer mockKafkaProducer = new MockKafkaProducer(new Properties());
