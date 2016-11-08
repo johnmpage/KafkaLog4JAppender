@@ -32,6 +32,7 @@ public class KafkaLog4JAppenderTest {
     logger.debug("Fourth message shouldn't be printed.");
     assertEquals(3,mockKafkaProducer.recordList.size());
     ProducerRecord producerRecord = mockKafkaProducer.recordList.get(0);
+    System.out.println(producerRecord.value().toString());
     JSONObject jsonObject  = (JSONObject)new JSONParser().parse(producerRecord.value().toString());
     assertEquals("First message.",jsonObject.get("message"));
   }
