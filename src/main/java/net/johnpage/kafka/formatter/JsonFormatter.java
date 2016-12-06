@@ -2,6 +2,15 @@ package net.johnpage.kafka.formatter;
 
 import org.apache.log4j.spi.LocationInfo;
 import org.apache.log4j.spi.LoggingEvent;
+import org.json.simple.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import java.util.Enumeration;
 import java.util.Properties;
@@ -15,43 +24,25 @@ public class JsonFormatter implements Formatter {
   private boolean includeMethodAndLineNumber = false;
   private Properties extraProperties;
   private String extraPropertiesString;
+  private Map extraPropertiesMap = null;
 
   public String format(LoggingEvent event) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("{");
-    fieldName("level", sb);
-    quote(event.getLevel().toString(), sb);
-    sb.append(COMMA);
-    fieldName("logger", sb);
-    quote(event.getLoggerName(), sb);
-    sb.append(COMMA);
-    fieldName("timestamp", sb);
-    sb.append(event.timeStamp);
-    sb.append(COMMA);
-    fieldName("message", sb);
-    if (this.expectJson) {
-      sb.append(event.getMessage());
-    } else {
-      quote(event.getMessage().toString(), sb);
-    }
-    if(includeMethodAndLineNumber) {
-      sb.append(COMMA);
-      // Caller Data
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("level", event.getLevel().toString());
+    jsonObject.put("logger", event.getLoggerName());
+    jsonObject.put("timestamp", event.timeStamp);
+    jsonObject.put("message", event.getMessage());
+    if (includeMethodAndLineNumber) {
       LocationInfo locationInfo = event.getLocationInformation();
       if (locationInfo != null) {
-        fieldName("method", sb);
-        quote(locationInfo.getMethodName(), sb);
-        sb.append(COMMA);
-        fieldName("lineNumber", sb);
-        quote(locationInfo.getLineNumber() + "", sb);
+        jsonObject.put("method", locationInfo.getMethodName());
+        jsonObject.put("lineNumber", locationInfo.getLineNumber() + "");
       }
     }
-    if(extraPropertiesString!=null && extraPropertiesString.length()>0){
-      sb.append(COMMA);
-      sb.append(extraPropertiesString);
+    if (this.extraPropertiesMap != null) {
+      jsonObject.putAll(extraPropertiesMap);
     }
-    sb.append("}");
-    return sb.toString();
+    return jsonObject.toJSONString();
   }
 
   private static void fieldName(String name, StringBuilder sb) {
@@ -100,5 +91,22 @@ public class JsonFormatter implements Formatter {
       isFirst = false;
     }
     extraPropertiesString = extraPropertiesStringBuilder.toString();
+  }
+
+  public void setExtraProperties(String thatExtraProperties) {
+    final Properties properties = new Properties();
+    try {
+      properties.load(new ByteArrayInputStream(thatExtraProperties.getBytes()));
+      Enumeration<?> enumeration = properties.propertyNames();
+      extraPropertiesMap = new HashMap();
+      while(enumeration.hasMoreElements()){
+        String name = (String)enumeration.nextElement();
+        String value = properties.getProperty(name);
+        extraPropertiesMap.put(name,value);
+      }
+    } catch (IOException e) {
+      System.out.println("There was a problem reading the extra properties configuration: "+e.getMessage());
+      e.printStackTrace();
+    }
   }
 }
