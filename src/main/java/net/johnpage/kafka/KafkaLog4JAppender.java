@@ -147,11 +147,11 @@ public class KafkaLog4JAppender extends AppenderSkeleton {
     this.kafkaProducerPropertiesFilePath = kafkaProducerPropertiesFilePath;
   }
 
-  public String getExtraLogPropertiesFilePath() {
+  public String getExtraPropertiesFilePath() {
     return extraPropertiesFilePath;
   }
 
-  public void setExtraLogPropertiesFilePath(String extraLogPropertiesFilePath) {
+  public void setExtraPropertiesFilePath(String extraLogPropertiesFilePath) {
     this.extraPropertiesFilePath = extraLogPropertiesFilePath;
   }
 }
