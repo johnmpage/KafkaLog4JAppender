@@ -3,6 +3,9 @@ package net.johnpage.kafka.formatter;
 import org.apache.log4j.spi.LocationInfo;
 import org.apache.log4j.spi.LoggingEvent;
 
+import java.util.Enumeration;
+import java.util.Properties;
+
 public class JsonFormatter implements Formatter {
   private static final String QUOTE = "\"";
   private static final String COLON = ":";
@@ -10,7 +13,8 @@ public class JsonFormatter implements Formatter {
 
   private boolean expectJson = false;
   private boolean includeMethodAndLineNumber = false;
-  private String serverId = null;
+  private Properties extraProperties;
+  private String extraPropertiesString;
 
   public String format(LoggingEvent event) {
     StringBuilder sb = new StringBuilder();
@@ -42,10 +46,9 @@ public class JsonFormatter implements Formatter {
         quote(locationInfo.getLineNumber() + "", sb);
       }
     }
-    if(serverId!=null){
+    if(extraPropertiesString!=null && extraPropertiesString.length()>0){
       sb.append(COMMA);
-      fieldName("serverId", sb);
-      quote(serverId,sb);
+      sb.append(extraPropertiesString);
     }
     sb.append("}");
     return sb.toString();
@@ -78,11 +81,24 @@ public class JsonFormatter implements Formatter {
     this.includeMethodAndLineNumber = includeMethodAndLineNumber;
   }
 
-  public String getServerId() {
-    return serverId;
+  public Properties getExtraProperties() {
+    return extraProperties;
   }
 
-  public void setServerId(String serverId) {
-    this.serverId = serverId;
+  public void setExtraProperties(Properties extraProperties) {
+    this.extraProperties = extraProperties;
+    Enumeration enumeration = extraProperties.propertyNames();
+    StringBuilder extraPropertiesStringBuilder = new StringBuilder();
+    boolean isFirst = true;
+    while (enumeration.hasMoreElements()) {
+      if(!isFirst){
+        extraPropertiesStringBuilder.append(COMMA);
+      }
+      String key = (String) enumeration.nextElement();
+      fieldName(key,extraPropertiesStringBuilder);
+      quote(extraProperties.getProperty(key),extraPropertiesStringBuilder);
+      isFirst = false;
+    }
+    extraPropertiesString = extraPropertiesStringBuilder.toString();
   }
 }

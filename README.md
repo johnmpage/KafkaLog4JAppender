@@ -10,9 +10,9 @@
 		<param name="KafkaProducerPropertiesFilePath" value="/kafka-producer.properties" />
 </appender>
 ```
-This is a Log4J Appender integrated with a Kafka Producer. It posts logging events as they occur to a remote Kafka topic. 
+This is a Log4J Appender integrated with a Kafka Producer. It posts events as they are added to a remote server from your file. 
+Kafka 0.70 has a Log4j appender, but newer versions omit an appender. This Appender is intended to be used with the latest version of Kafka 0.10.
 
-Kafka 0.70 has a Log4j appender, but newer versions omit one. This Appender is intended to be used with the latest version of Kafka 0.10.
 
 ### Building
 ```
@@ -36,7 +36,19 @@ security.protocol=SSL
 ssl.truststore.location=a.kafka.client.truststore.jks
 ssl.truststore.password=apassword
 ```
-[A complete reference to the producer properties is here](https://kafka.apache.org/documentation.html#producerconfigs).
+A complete reference to the producer properties is [here](https://kafka.apache.org/documentation.html#producerconfigs).
+
+### Optional Extra Message Properties
+
+With load-balanced applications it can be useful to tag log messages with a server identifier. 
+By setting an *ExtraPropertiesFilePath* parameter any number of extra properties will be added to each message sent to the Kafka topic.
+```xml
+<appender name="KafkaStream" class="net.johnpage.kafka.KafkaLog4JAppender">
+		<param name="Topic" value="a-topic" />
+		<param name="KafkaProducerPropertiesFilePath" value="/kafka-producer.properties" />
+		<param name="ExtraPropertiesFilePath" value="/extra.properties" />
+</appender>
+```
 
 ### Built using:
 * [Log4J 1.2.8](https://commons.apache.org/proper/commons-io/)
@@ -50,4 +62,4 @@ Tested with Kafka 0.10. Should be backwards compatible with 0.90 and 0.82. These
 ```java
 new KafkaProducer(Properties properties) 
 ```
-Version-appropriate properties will need to be used.
+To use a different version of Kafka, include the desired version on the classpath. Version-appropriate properties will need to be used.
