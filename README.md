@@ -23,7 +23,8 @@ mvn clean install
 
 1. Place the *kafka-log4j-appender-1.0.jar* in the application *"lib"* directory.
 2. Download and place the *kafka-clients-0.10.0.0.jar* and the *json-simple-1.1.1.jar* into the application *"lib"* directory.
-3. Provide a Kafka Producer properties file at the location configured in the lo4j configuration file.
+3. Edit the log4j configuration file.
+4. Ensure a Kafka Producer properties file is available at the location configured in the lo4j configuration file.
 
 ### Kafka Producer Properties
 
