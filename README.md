@@ -56,7 +56,7 @@ By setting an *ExtraPropertiesFilePath* parameter any number of extra properties
 * [Apache Kafka Producer 0.10](https://kafka.apache.org/)
 
 ### Log4J Version 1.2.8
-We recommend using the [Log4j 2 KafkaAppender(http://logging.apache.org/log4j/2.x/manual/appenders.html#KafkaAppender)] if your project uses Log4J 2.  
+We recommend using the [Log4j 2 KafkaAppender](http://logging.apache.org/log4j/2.x/manual/appenders.html#KafkaAppender) if your project uses Log4J 2.  
 
 ### Kafka Version
 Tested with Kafka 0.10. Should be backwards compatible with 0.90 and 0.82. These 3 versions rely on the following initialization of the Producer:
