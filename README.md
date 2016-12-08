@@ -10,7 +10,7 @@
 		<param name="KafkaProducerPropertiesFilePath" value="/kafka-producer.properties" />
 </appender>
 ```
-This is a Log4J Appender integrated with a Kafka Producer. It posts events as they are added to a remote server from your file. 
+This is a Log4J Appender integrated with a Kafka Producer. It posts events as they occur to a remote Kafka queue. 
 Kafka 0.70 has a Log4j appender, but newer versions omit an Appender. This Appender is intended to be used with the latest version of Kafka (v0.10) and the legacy version of Log4J (v1.28). 
 Use the [Log4j 2 KafkaAppender](http://logging.apache.org/log4j/2.x/manual/appenders.html#KafkaAppender) if your project uses Log4J 2.
 
