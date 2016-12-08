@@ -9,6 +9,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -35,5 +37,15 @@ public class KafkaLog4JAppenderTest {
     System.out.println(producerRecord.value().toString());
     JSONObject jsonObject  = (JSONObject)new JSONParser().parse(producerRecord.value().toString());
     assertEquals("First message.",jsonObject.get("message"));
+  }
+  @Test
+  public void testGetPropertiesFromFile () throws ParseException, IOException {
+    Logger logger = Logger.getLogger(KafkaLog4JAppenderTest.class);
+    KafkaLog4JAppender appender = new KafkaLog4JAppender();
+    File file = new File("");
+    String filePath = file.getAbsolutePath()+File.separator+"src"+File.separator+"test"+File.separator+"resources"+File.separator+"test.properties";
+    System.out.println(filePath);
+    Properties properties = appender.getPropertiesFromFile(filePath);
+    assertEquals("valueTwo",properties.getProperty("propertyTwo"));
   }
 }

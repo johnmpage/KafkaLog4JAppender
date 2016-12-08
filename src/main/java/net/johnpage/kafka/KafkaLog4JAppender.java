@@ -7,10 +7,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -83,17 +80,29 @@ public class KafkaLog4JAppender extends AppenderSkeleton {
         ProducerRecord<String, String> producerRecord = new ProducerRecord(topic, string);
         producer.send(producerRecord);
       } catch (Exception e) {
-        System.out.println("KafkaAppender: Exception sending message: '" + e + " : " + e.getMessage() + "'.");
+        System.out.println("KafkaLog4JAppender: Exception sending message: '" + e + " : " + e.getMessage() + "'.");
         e.printStackTrace();
       }
     }
 
-  private Properties getPropertiesFromFile(String path) throws IOException {
+  public Properties getPropertiesFromFile(String path) throws IOException {
     Properties properties = new Properties();
-    InputStream in;
-    in = getClass().getResourceAsStream(path);
-    properties.load(in);
-    in.close();
+    InputStream input = null;
+    try {
+      input = new FileInputStream(path);
+      properties.load(input);
+    } catch (IOException e) {
+      System.out.println("KafkaLog4JAppender: IOException reading properties: path=" + path + " : message=" + e.getMessage());
+      e.printStackTrace();
+    } finally {
+      if (input!=null) {
+        try {
+          input.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
     return properties;
   }
 
